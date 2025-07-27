@@ -1,10 +1,10 @@
 import { createWebHistory, createRouter } from "vue-router";
-import Home from "@/views/home.vue";
+
 const routes = [
     {
         path: '/',
         name: 'Home',
-        component: Home,
+        component: () => import('@/views/Home.vue'),
     },
 
     {
@@ -14,10 +14,28 @@ const routes = [
     },
 
     {
+        path: '/register',
+        name: 'Register',
+        component: () => import('@/views/Register.vue')
+    },
+
+    {
         path: '/login',
         name: 'Login',
         component: () => import('@/views/Login.vue')
-    }
+    },
+
+    {
+        path: '/create_request/:bookId',
+        name: 'CreateRequest',
+        component: () => import('@/views/CreateRequest.vue')
+    },
+
+    {
+        path: '/requests',
+        name: 'Requests',
+        component: () => import('@/views/Request.vue')
+    },
 ];
 
 const router = createRouter({

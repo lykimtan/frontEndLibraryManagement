@@ -1,6 +1,14 @@
 <template>
     <div class="container py-4">
         <h1 class="text-center fw-bold p-4"> Danh mục sách</h1>
+
+    <div v-if="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <div v-if="success" class="alert alert-success">
+      {{ success }}
+    </div>
         <InputSearch @search="handleSearch" />
         <div>
             <BookList 
@@ -33,7 +41,9 @@ export default {
         return {
             books: [],
             searchText: '',
-            loading: false
+            loading: false,
+            error: null,
+            success: null
         };
     },
     computed: {
@@ -77,6 +87,15 @@ export default {
     async mounted() {
         console.log('Book component mounted');
         await this.retrieveBooks();
+
+        const successMassage = this.$route.query.success;
+        if(successMassage) {
+            this.success = successMassage;
+            setTimeout(() => {
+                this.success = null;
+                this.$router.replace({query: {}}); //xoá bỏ query sau khi đã thông báo xong
+            }, 3000);
+        }
     }
 }
 </script>

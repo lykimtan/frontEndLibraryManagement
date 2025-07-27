@@ -1,5 +1,43 @@
 <script setup>
+import { ref, onMounted, watch } from 'vue';
 import router from '@/router';
+
+const userName = ref('Tài khoản');
+//function lấy thông tin từ localStorage để update userName
+const updateUserName = () => {
+  const userStr = localStorage.getItem("user");
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      userName.value = user.name || user.email || "Tài khoản";
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+      userName.value = "Tài khoản";
+    }
+  } else {
+    userName.value = "Tài khoản";
+  }
+};
+
+// Update khi component mount
+onMounted(() => {
+  updateUserName();
+});
+
+// Listen cho storage changes (khi login/logout)
+window.addEventListener('storage', updateUserName);
+
+watch(() => router.currentRoute.value, () => {
+  updateUserName();
+});
+
+// Function logout
+const handleLogout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  userName.value = 'Tài khoản';
+  router.push('/login');
+};
 </script>
 
 <template>
@@ -55,10 +93,40 @@ import router from '@/router';
           <li class="nav-item">
             <router-link to="/about" class="nav-link">Giới thiệu</router-link>
           </li>
-          <li class="nav-item">
-            <router-link to="/account" class="btn btn-outline-light ms-3">
-              <i class="fa-solid fa-circle-user me-1"></i> Tài khoản
+          
+          <!-- Hiển thị button login nếu chưa đăng nhập -->
+          <li class="nav-item" v-if="userName === 'Tài khoản'">
+            <router-link to="/login" class="btn btn-outline-light ms-3">
+              <i class="fa-solid fa-sign-in-alt me-1"></i> 
+              Đăng nhập
             </router-link>
+          </li>
+          
+          <!-- Hiển thị dropdown account nếu đã đăng nhập -->
+          <li class="nav-item dropdown" v-else>
+            <a
+              class="btn btn-outline-light ms-3 dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="fa-solid fa-circle-user me-1"></i> 
+              {{ userName }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <router-link to="/account" class="dropdown-item">
+                  <i class="fa-solid fa-user me-2"></i>Tài khoản
+                </router-link>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a href="#" @click.prevent="handleLogout" class="dropdown-item">
+                  <i class="fa-solid fa-sign-out-alt me-2"></i>Đăng xuất
+                </a>
+              </li>
+            </ul>
           </li>
         </ul>
       </div>
@@ -68,7 +136,7 @@ import router from '@/router';
 
 <style scoped>
 .custom-navbar {
-background: linear-gradient(90deg, #555555, #333333);
+  background: linear-gradient(90deg, #555555, #333333);
   padding: 0.7rem 1.5rem;
 }
 
@@ -97,5 +165,13 @@ background: linear-gradient(90deg, #555555, #333333);
 .dropdown-item:hover {
   background-color: #e9f7ef;
   color: #218838;
+}
+
+.btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
 }
 </style>

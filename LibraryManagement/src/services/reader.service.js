@@ -9,8 +9,17 @@ class ReaderService {
         return (await this.api.get('/')).data;
     }
 
-    async createReader(readerData) {
-        return (await this.api.post('/', readerData)).data;
+   async createReader(readerData) {
+    try {
+        console.log('Service: Sending data:', readerData); 
+        const response = await this.api.post('/', readerData);
+        console.log('Service: Success response:', response); 
+        return response.data;
+    } catch (error) {
+        console.log('Service: Error caught:', error); 
+        console.log('Service: Error response:', error.response); 
+        throw error; 
+    }
     }
 
     async getReaderById(readerId) {
@@ -25,8 +34,17 @@ class ReaderService {
         return (await this.api.put(`/${readerId}`/password, newPassword)).data;
     }
 
-    async login(readerData) {
-        return (await this.api.post(`/login`, readerData)).data;
+    async login(email, password) {
+       try {
+            const response = await this.api.post('/login', {
+                email, 
+                password
+            });
+            return response.data;
+       }catch (error) {
+        console.error("login service error: ", error);
+        throw error;
+       }
     }
 
     async deleteReader(readerId) {

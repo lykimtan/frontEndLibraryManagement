@@ -1,7 +1,7 @@
 import createApiClient from './api.service';
 
 class LibraryService {
-    constructor (baseUrl = '/api/libraryService') {
+    constructor (baseUrl = '/api/librarymanagement/libraryService') {
         this.api = createApiClient(baseUrl);
     }
 

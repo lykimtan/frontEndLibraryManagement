@@ -97,16 +97,23 @@ export default {
       try {
         const response = await readerService.login(this.email, this.password);
 
-        if (response.success) {
-          localStorage.setItem("user", JSON.stringify(response.user));
+        if (response.token) {
           localStorage.setItem("token", response.token);
-          this.$router.push({ name: "Books" });
+          //lưu user info
+          localStorage.setItem("user", JSON.stringify(response.reader));
+          this.$router.push({ name: "Home" });
         } else {
           this.errorMessage = response.message || "Đăng nhập không thành công.";
         }
       } catch (err) {
-        console.error(err);
-        this.errorMessage = "Có lỗi xảy ra. Vui lòng thử lại.";
+        if(err.response) {
+          this.errorMessage = err.response.data.message || "Email hoặc mật khẩu không đúng";
+        } else if(err.request) {
+          this.errorMessage = "Không thể kết nối với máy chủ. Vui lòng kiểm tra lại";
+          
+        } else {
+          this.errorMessage = "Có lỗi xảy ra, vui lòng thử lại"
+        }
       } finally {
         this.loading = false;
       }

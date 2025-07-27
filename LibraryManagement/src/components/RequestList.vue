@@ -1,23 +1,14 @@
 <script>
 export default {
-    name: 'BookList',
+    name: 'RequestList',
     props: {
-        books: {
+        requests: {
             type: Array,
             default: () => []
          }
     },
     methods: {
-        goToRequest(book) {
-            this.$router.push({
-                name: 'CreateRequest',
-                params: { bookId: book._id }
-            });
-            this.$emit('request-book', book);
-        },
-        getBookImage(book) {
-            return book.image || '/src/assets/bookstock.png';
-        }
+
     }
 }
 </script>
@@ -25,8 +16,8 @@ export default {
 <template>
   <div class="container">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
-      <div class="col" v-for="book in books" :key="book._id">
-        <div class="card h-100 shadow-sm book-card">
+      <div class="col" v-for="request in requests" :key="request._id">
+        <form class="card h-100 shadow-sm book-card">
           <img
             :src="getBookImage(book)"
             class="card-img-top mx-auto mt-3 rounded"
@@ -37,20 +28,17 @@ export default {
             <h5 class="card-title fw-bold text-primary">
               {{ book.tensach || 'Tên sách không có' }}
             </h5>
-            <p class="card-text mb-1"><strong>Tác giả:</strong> {{ book.tacgia || 'Chưa có thông tin' }}</p>
-            <p class="card-text mb-1"><strong>Nhà xuất bản:</strong> {{ book.nxb_name || 'Chưa có thông tin' }}</p>
-            <p class="card-text mb-1"><strong>Đơn giá:</strong> {{ book.dongia || 'N/A' }}</p>
-            <p class="card-text mb-3"><strong>Số quyển:</strong> {{ book.soquyen || 0 }}</p>
+            <p class="card-text mb-1"><strong>Ngày mượn: </strong> {{ request.borrowDate || 'Chưa có thông tin' }}</p>
+            <p class="card-text mb-1"><strong>Ngày trả dự kiến: </strong> {{ request.expectedReturnDate || 'Chưa có thông tin' }}</p>
+            <p class="card-text mb-1"><strong>Trạng thái:</strong> {{ request.status || 'N/A' }}</p>
             <button
               type="button"
               class="btn btn-outline-primary mt-auto"
-              @click="goToRequest(book)"
-              :disabled="!book.soquyen || book.soquyen <= 0"
-            >
-              Tạo yêu cầu mượn sách
+              @click="goToDelete(request)">
+              Xoá yêu cầu
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>
