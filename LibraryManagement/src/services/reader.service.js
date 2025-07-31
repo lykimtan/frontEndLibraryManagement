@@ -4,6 +4,7 @@ class ReaderService {
     constructor(baseUrl= '/api/librarymanagement/reader') {
         this.api = createApiClient(baseUrl);
     }
+    
 
     async getAllReader() {
         return (await this.api.get('/')).data;
@@ -31,7 +32,7 @@ class ReaderService {
     }
 
     async changePasswordReader(readerId, newPassword) {
-        return (await this.api.put(`/${readerId}`/password, newPassword)).data;
+        return (await this.api.put(`/${readerId}/password`, newPassword)).data;
     }
 
     async login(email, password) {

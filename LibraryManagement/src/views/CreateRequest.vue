@@ -112,7 +112,6 @@ export default {
         this.error = null;
 
         try {
-     
             await libraryService.borrowRequest(payload);
             this.$emit('request:submitted', payload);
             this.$router.push({ 
@@ -121,7 +120,17 @@ export default {
             });
         } catch (error) {
             console.error('Error submitting request:', error);
-            this.error = 'Không thể gửi yêu cầu mượn sách. Vui lòng thử lại.';
+            if (error.response && error.response.data && error.response.data.message) {
+                this.error = error.response.data.message;
+            } else if (error.message) {
+                this.error = error.message;
+            } else {
+                this.error = 'Không thể gửi yêu cầu mượn sách. Vui lòng thử lại.';
+            }
+               setTimeout(() => {
+                    this.error = null;
+                    this.$router.push({ name: 'Books'});
+                }, 5000);
         } finally {
             this.loading = false;
         }

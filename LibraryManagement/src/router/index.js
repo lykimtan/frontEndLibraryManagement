@@ -36,6 +36,18 @@ const routes = [
         name: 'Requests',
         component: () => import('@/views/Request.vue')
     },
+
+    {
+        path: '/history',
+        name: 'History',
+        component: () => import('@/views/History.vue')
+    },
+
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: () => import('@/views/AccountProfile.vue')
+    }
 ];
 
 const router = createRouter({

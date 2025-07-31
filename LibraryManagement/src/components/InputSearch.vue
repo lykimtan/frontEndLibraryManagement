@@ -37,7 +37,7 @@ export default {
             class="btn btn-outline-secondary"
             type="button"
             @click="handleSubmit">
-            <img src="@/assets/search.svg" alt="" class="icon">
+            <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </div>
      </div>

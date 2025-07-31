@@ -25,6 +25,17 @@ class LibraryService {
         return (await this.api.get(`/status/${status}`)).data;
     }
 
+ 
+
+    async getRequestsByReaderId(readerID) {
+        return (await this.api.post('/reader/requests', { readerId: readerID })).data;
+    }
+
+    async getRequestsHistoryByReaderId(readerID) {
+        return (await this.api.post('/reader/history', { readerId: readerID })).data;
+    }
+
+
     async returnBook(returnData) {
         return (await this.api.put('/return', returnData)).data;
     }

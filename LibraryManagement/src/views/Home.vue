@@ -46,70 +46,74 @@
 
 
     <!-- Quy định -->
-    <div class="mt-5">
-      <h2 class="text-center mb-4">
-        <img src="@/assets/rule.svg" alt="" class="icon">
-         Các quy định khi mượn – trả sách
-        </h2>
+    <div class="rules-section container mt-5">
+  <h2 class="text-center mb-4 fw-bold d-flex justify-content-center align-items-center gap-2">
+    <img src="@/assets/rule.svg" alt="icon" class="icon" width="40" height="40" />
+    Các quy định khi mượn – trả sách
+  </h2>
 
-      <div class="accordion" id="accordionRules">
+  <div class="accordion shadow-sm rounded" id="accordionRules">
 
-        <!-- 1. Điểm uy tín -->
-        <div class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#ruleOne" aria-expanded="true" aria-controls="ruleOne">
-              1. Điểm Uy Tín Người Dùng
-            </button>
-          </h2>
-          <div id="ruleOne" class="accordion-collapse collapse show" data-bs-parent="#accordionRules">
-            <div class="accordion-body">
-              <ul>
-                <li>Người dùng được cấp 100 điểm uy tín khi đăng ký tài khoản thành công.</li>
-                <li>Điểm được dùng để đánh giá trách nhiệm và lịch sử mượn trả.</li>
-                <li>Nếu điểm ≤ 0, không thể mượn sách cho đến khi điểm được phục hồi.</li>
-              </ul>
-            </div>
-          </div>
+    <!-- 1. Điểm uy tín -->
+    <div class="accordion-item border-0 mb-3">
+      <h2 class="accordion-header">
+        <button class="accordion-button fw-semibold text-primary" type="button" data-bs-toggle="collapse"
+          data-bs-target="#ruleOne" aria-expanded="true" aria-controls="ruleOne">
+          📌 1. Điểm Uy Tín Người Dùng
+        </button>
+      </h2>
+      <div id="ruleOne" class="accordion-collapse collapse show" data-bs-parent="#accordionRules">
+        <div class="accordion-body bg-light rounded-bottom">
+          <ul class="mb-0 ps-3">
+            <li>Người dùng được cấp <strong>100 điểm uy tín</strong> khi đăng ký tài khoản thành công.</li>
+            <li>Điểm dùng để đánh giá trách nhiệm và lịch sử mượn trả sách.</li>
+            <li>Nếu điểm ≤ 0, <span class="text-danger fw-semibold">người dùng không thể mượn sách</span> cho đến khi điểm được phục hồi.</li>
+          </ul>
         </div>
-
-        <!-- 2. Thời gian mượn -->
-        <div class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ruleTwo" aria-expanded="false" aria-controls="ruleTwo">
-              2. Thời Gian Mượn và Trả Sách
-            </button>
-          </h2>
-          <div id="ruleTwo" class="accordion-collapse collapse" data-bs-parent="#accordionRules">
-            <div class="accordion-body">
-              <ul>
-                <li>Thời gian mượn tối đa là 14 ngày.</li>
-                <li>Được gia hạn 1 lần tối đa 7 ngày nếu không có yêu cầu khác.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. Trả trễ & mất sách -->
-        <div class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ruleThree" aria-expanded="false" aria-controls="ruleThree">
-              3. Xử Lý Trả Trễ & Mất Sách
-            </button>
-          </h2>
-          <div id="ruleThree" class="accordion-collapse collapse" data-bs-parent="#accordionRules">
-            <div class="accordion-body">
-              <ul>
-                <li>Trả trễ bị trừ 10 điểm/ngày trễ.</li>
-                <li>Mất hoặc làm hư sách phải đền gấp đôi giá trị sách và trừ thêm 50 điểm.</li>
-                <li>Lịch sử mượn trả sẽ được lưu trữ để quản lý đánh giá.</li>
-                <li>Người dùng có thể yêu cầu khôi phục điểm trong trường hợp đặc biệt.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
+
+    <!-- 2. Thời gian mượn -->
+    <div class="accordion-item border-0 mb-3">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed fw-semibold text-primary" type="button" data-bs-toggle="collapse"
+          data-bs-target="#ruleTwo" aria-expanded="false" aria-controls="ruleTwo">
+          ⏳ 2. Thời Gian Mượn và Trả Sách
+        </button>
+      </h2>
+      <div id="ruleTwo" class="accordion-collapse collapse" data-bs-parent="#accordionRules">
+        <div class="accordion-body bg-light rounded-bottom">
+          <ul class="mb-0 ps-3">
+            <li>Thời gian mượn tối đa là <strong>14 ngày</strong>.</li>
+            <li>Được phép gia hạn <strong>1 lần</strong> tối đa 7 ngày nếu không có yêu cầu khác.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Trả trễ & mất sách -->
+    <div class="accordion-item border-0 mb-3">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed fw-semibold text-primary" type="button" data-bs-toggle="collapse"
+          data-bs-target="#ruleThree" aria-expanded="false" aria-controls="ruleThree">
+          ⚠️ 3. Xử Lý Trả Trễ & Mất Sách
+        </button>
+      </h2>
+      <div id="ruleThree" class="accordion-collapse collapse" data-bs-parent="#accordionRules">
+        <div class="accordion-body bg-light rounded-bottom">
+          <ul class="mb-0 ps-3">
+            <li>Trả trễ bị <strong class="text-danger">trừ 10 điểm</strong> cho mỗi ngày trễ.</li>
+            <li>Mất hoặc làm hư sách phải đền <strong>gấp đôi</strong> giá trị sách và trừ thêm <strong>50 điểm</strong>.</li>
+            <li>Lịch sử mượn trả được lưu trữ phục vụ việc đánh giá và xử lý.</li>
+            <li>Có thể gửi yêu cầu <em>khôi phục điểm</em> trong những trường hợp đặc biệt.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
   </div>
 </template>

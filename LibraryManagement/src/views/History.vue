@@ -1,35 +1,22 @@
-//vào sửa API khi lấy request thì lấy thêm tên sách và ảnh
 <template>
     <div class="container py-4">
-        <h1 class="text-center fw-bold p-4"> Danh mục các yêu cầu đã gửi</h1>
+        <h1 class="text-center fw-bold p-4"> Lịch sử mượn</h1>
       
         <InputSearch @search="handleSearch" />
 
          <div class="card shadow-sm border-0 mb-4">
-    <div class="card-body">
-        <h5 class="card-title mb-3 text-primary fw-bold">Bộ lọc trạng thái</h5>
+  <div class="card-body">
+    <h5 class="card-title mb-3 text-primary fw-bold">Bộ lọc trạng thái</h5>
         <div class="d-flex flex-column flex-md-row gap-4 align-items-start">
         <div class="form-check">
             <input
             type="checkbox"
             class="form-check-input"
-            id="pending"
-            v-model="filterStatus.pending"
+            id="returned"
+            v-model="filterStatus.returned"
             />
-            <label class="form-check-label ms-2" for="pending">
-            Đang chờ duyệt
-            </label>
-        </div>
-
-        <div class="form-check">
-            <input
-            type="checkbox"
-            class="form-check-input"
-            id="approved"
-            v-model="filterStatus.approved"
-            />
-            <label class="form-check-label ms-2" for="approved">
-            Đã duyệt
+            <label class="form-check-label ms-2" for="returned">
+            Đã trả
             </label>
         </div>
 
@@ -42,18 +29,6 @@
             />
             <label class="form-check-label ms-2" for="borrowed">
             Đã mượn
-            </label>
-        </div>
-
-        <div class="form-check">
-            <input
-            type="checkbox"
-            class="form-check-input"
-            id="rejected"
-            v-model="filterStatus.rejected"
-            />
-            <label class="form-check-label ms-2" for="rejected">
-            Bị từ chối
             </label>
         </div>
 
@@ -79,7 +54,7 @@
 
         <div v-if="success" class="alert alert-success">
         {{ success }}</div>
-        <RequestList
+        <BorrowHistory
             v-if="filteredRequestCount > 0"
             :requests="filteredRequests"
             @delete-request="deleteRequest"
@@ -94,15 +69,16 @@
       </div>
 
 </template>
+
 <script>
-import RequestList from '@/components/RequestList.vue';
 import InputSearch from '@/components/InputSearch.vue';
+import BorrowHistory from '@/components/BorrowHistory.vue';
 import BookService from '@/services/book.service';
 import LibraryService from '@/services/library.service';
 
 export default {
     components: {
-        RequestList,
+        BorrowHistory,
         InputSearch,
     },
     data() {
@@ -139,21 +115,12 @@ export default {
             let filtered = this.requests;
             
             // Filter theo status
-            if (this.filterStatus.pending) {
-                filtered = filtered.filter(request => request.status === 'pending');
+            if (this.filterStatus.returned) {
+                filtered = filtered.filter(request => request.status === 'returned');
             }
 
             if (this.filterStatus.borrowed) {
                 filtered = filtered.filter(request => request.status === 'borrowed');
-            }
-
-            if (this.filterStatus.rejected) {
-                filtered = filtered.filter(request => request.status === 'rejected');
-            }
-
-        
-            if (this.filterStatus.approved) {
-                filtered = filtered.filter(request => request.status === 'approved');
             }
 
             // Filter theo search text
@@ -207,7 +174,7 @@ export default {
         },
         async fetchRequests() {
             try {
-                this.requests = await LibraryService.getRequestsByReaderId(this.readerId);
+                this.requests = await LibraryService.getRequestsHistoryByReaderId(this.readerId);
                 console.log("Requests fetched:", this.requests);
                 if (!this.requests || this.requests.length === 0) {
                     return this.requests = [];
@@ -222,7 +189,7 @@ export default {
         async getInfoReader() {
         const reader = localStorage.getItem('user');
         if(!reader) {
-            this.error = 'Bạn cần đăng nhập để xem các yêu cầu mượn sách.';
+            this.error = 'Bạn cần đăng nhập để xem lịch sử mượn sách';
             //chuyen huong den trang dang nhap sau 2s
             setTimeout(()=> {
                 this.$router.push({ name: 'Login'})
@@ -237,7 +204,7 @@ export default {
 
         async deleteRequest(requestId) {
             console.log("Deleting request ID:", requestId);
-            if(confirm("Bạn có chắc muốn xoá yêu cầu mượn sách này không ?")) {
+            if(confirm("Bạn có chắc muốn xoá lịch sử mượn này không ?")) {
                 try {
                     await LibraryService.deleteRequest(requestId);
                     //xoá xong loại bỏ request có id đã bị xoá khỏi mảng requests để phần tử đó không hiển thị nữa

@@ -116,7 +116,7 @@ const handleLogout = () => {
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
-                <router-link to="/account" class="dropdown-item">
+                <router-link to="/profile" class="dropdown-item">
                   <i class="fa-solid fa-user me-2"></i>Tài khoản
                 </router-link>
               </li>
