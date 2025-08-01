@@ -38,7 +38,8 @@ export default {
                 'approved': 'Đã duyệt',
                 'rejected': 'Bị từ chối',
                 'borrowed': 'Đã mượn',
-                'returned': 'Đã trả'
+                'returned': 'Đã trả',
+                'lost': 'Mất sách'
             };
             return statusMap[status] || status || 'Không xác định';
         },
@@ -49,7 +50,8 @@ export default {
                 'approved': 'text-success',
                 'rejected': 'text-danger',
                 'borrowed': 'text-info',
-                'returned': 'text-secondary'
+                'returned': 'text-secondary',
+                'lost': 'text-danger'
             };
             return classMap[status] || 'text-muted';
         }
@@ -103,6 +105,9 @@ export default {
               {{ getStatusText(request.status) }}
             </span>
           </p>
+           <p v-if="request.status === 'rejected'" class="mb-1">
+                <strong>Lý do: </strong> {{ request.reason }}
+            </p>
 
           <button
             type="button"

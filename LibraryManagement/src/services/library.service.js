@@ -13,12 +13,45 @@ class LibraryService {
         return (await this.api.get('/')).data;
     }
 
-    async approveRequest(approveData) {
-        return (await this.api.put('/approve', approveData)).data;
+   async approveRequest(borrowId, staffId) {
+        console.log('Approving request:', { borrowId, staffId });
+        
+        return (await this.api.put('/approve', {
+            borrowId: borrowId,
+            staffId: staffId
+        })).data;
     }
 
-    async rejectRequest(rejectData) {
+     async borrowed(borrowId, staffId) {
+        console.log('Borrowed:', { borrowId, staffId });
+        
+        return (await this.api.put('/borrowed', {
+            borrowId: borrowId,
+            staffId: staffId
+        })).data;
+    }
+
+    async returnBook(borrowId, staffId) {
+        console.log('Returning book:', { borrowId, staffId });
+
+        return (await this.api.put('/return', {
+            borrowId: borrowId,
+            returnStaffId: staffId
+        })).data;
+    }
+
+    async rejectRequest(borrowId, staffId, reason) {
+        const rejectData = { borrowId, staffId, reason };
         return (await this.api.put('/rejected', rejectData)).data;
+    }
+
+    async lostBook(borrowId, staffId) {
+        console.log('Marking book as lost:', { borrowId, staffId });
+
+        return (await this.api.put('/lost', {
+            borrowId: borrowId,
+            returnStaffId: staffId
+        })).data;
     }
 
     async getRequestByStatus(status) {
@@ -36,13 +69,9 @@ class LibraryService {
     }
 
 
-    async returnBook(returnData) {
-        return (await this.api.put('/return', returnData)).data;
-    }
+    
 
-    async lostBook(lostData) {
-        return (await this.api.put('/lost', lostData)).data;
-    }
+  
 
     async getRequestById(requestId) {
         return (await this.api.get(`/${requestId}`)).data;

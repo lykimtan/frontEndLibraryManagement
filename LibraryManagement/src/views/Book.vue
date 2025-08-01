@@ -14,6 +14,7 @@
             <BookList 
                 v-if="filteredBookCount > 0"
                 :books="filteredBooks" 
+                @delete-book="handleDeleteBook"
             />
             <div v-else class="text-center py-5">
                 <img class="icon" src="@/assets/notfound.svg" alt="">
@@ -82,7 +83,37 @@ export default {
             } finally {
                 this.loading = false;
             }
+        },
+
+        async handleDeleteBook(bookId) {
+            if (confirm("Bạn có chắc muốn xoá sách này không?")) {
+            try {
+                console.log('Deleting book with ID:', bookId);
+                
+                const response = await BookService.deleteBook(bookId); // ← Thêm const
+                
+                console.log('Delete response:', response);
+                this.success = 'Xoá sách thành công!';
+                await this.retrieveBooks(); // Reload danh sách
+                
+                // Clear success message sau 3s
+                setTimeout(() => {
+                    this.success = null;
+                }, 3000);    
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                this.error = error.response?.data?.message || 'Không thể xoá sách này.';
+                
+                // Clear error message sau 5s
+                setTimeout(() => {
+                    this.error = null;
+                }, 5000);
+            }
         }
+    },
+    
+
+        
     },
     async mounted() {
         console.log('Book component mounted');
@@ -96,8 +127,8 @@ export default {
                 this.$router.replace({query: {}}); //xoá bỏ query sau khi đã thông báo xong
             }, 3000);
         }
+    },
     }
-}
 </script>
 <style scoped>
 .icon{

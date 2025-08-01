@@ -21,7 +21,8 @@ const updateUserName = () => {
 
 // Update khi component mount
 onMounted(() => {
-  updateUserName();
+  updateUserName(); 
+  isStaff();
 });
 
 // Listen cho storage changes (khi login/logout)
@@ -29,6 +30,7 @@ window.addEventListener('storage', updateUserName);
 
 watch(() => router.currentRoute.value, () => {
   updateUserName();
+
 });
 
 // Function logout
@@ -38,6 +40,16 @@ const handleLogout = () => {
   userName.value = 'Tài khoản';
   router.push('/login');
 };
+
+const isStaff = () => {
+  const user = localStorage.getItem('user');
+  if (user) {
+    const parsedUser = JSON.parse(user);
+    return parsedUser.role === 'staff';
+  }
+  return false;
+};
+
 </script>
 
 <template>
@@ -47,7 +59,7 @@ const handleLogout = () => {
         <img src="@/assets/openbook.svg" alt="Logo" class="logo me-2" />
         <div>
           <strong class="fs-5 text-white">LIBRARY SERVICE</strong><br />
-          <small class="text-light">For reader</small>
+          <small class="text-light">{{ isStaff() ? 'For Staff' : 'For Reader' }}</small>
         </div>
       </router-link>
 
@@ -68,9 +80,31 @@ const handleLogout = () => {
           <li class="nav-item">
             <router-link to="/" class="nav-link">Trang chủ</router-link>
           </li>
+
           <li class="nav-item">
             <router-link to="/books" class="nav-link">Danh mục sách</router-link>
           </li>
+
+           <li v-if="isStaff()" class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Danh mục nhà xuất bản
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <router-link to="/nxb" class="dropdown-item">Danh mục nhà xuất bản</router-link>
+              </li>
+              <li>
+                <router-link to="/create_nxb" class="dropdown-item">Thêm nhà xuất bản</router-link>
+              </li>
+            </ul>
+          </li>
+
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"

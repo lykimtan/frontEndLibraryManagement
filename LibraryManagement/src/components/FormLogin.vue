@@ -63,6 +63,16 @@
           {{ loading ? 'Đang đăng nhập...' : 'Đăng Nhập' }}
         </button>
 
+         <button
+          @click="LoginAsStaff"
+          type="button"
+          class="btn btn-primary w-100 fw-semibold mt-3"
+          :disabled="loading"
+        >
+          <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
+          {{ loading ? 'Đang đăng nhập...' : 'Đăng Nhập với tư cách thủ thư' }}
+        </button>
+
         <!-- Register link -->
         <div class="text-center mt-3 small">
           Chưa có tài khoản?
@@ -77,6 +87,8 @@
 
 <script>
 import readerService from "@/services/reader.service";
+import Login from "@/views/Login.vue";
+import staffService from "@/services/staff.service";
 
 export default {
   name: "FormLogin",
@@ -90,6 +102,41 @@ export default {
     };
   },
   methods: {
+     async LoginAsStaff() {
+      this.errorMessage = "";
+      this.loading = true;
+
+      try {
+        const response = await staffService.login(this.email, this.password);
+        console.log('Full response:', response);
+
+        if (response.token) {
+          // Lưu token và thông tin staff
+          localStorage.setItem("token", response.token);
+          localStorage.setItem("user", JSON.stringify(response.reader));
+          
+          console.log('Staff login successful');
+          
+          this.$router.push({ name: "Home" });
+        } else {
+          console.log('No token in response:', response);
+          this.errorMessage = response.message || "Đăng nhập thủ thư không thành công.";
+        }
+      } catch (err) {
+        
+        if(err.response) {
+          console.log('Response status:', err.response.status);
+          console.log('Response data:', err.response.data);
+          this.errorMessage = err.response.data.message || "Email hoặc mật khẩu thủ thư không đúng";
+        } else if(err.request) {
+          this.errorMessage = "Không thể kết nối với máy chủ. Vui lòng kiểm tra lại";
+        } else {
+          this.errorMessage = "Có lỗi xảy ra, vui lòng thử lại"
+        }
+      } finally {
+        this.loading = false;
+      }
+    },
     async handleSubmit() {
       this.errorMessage = "";
       this.loading = true;
@@ -101,6 +148,7 @@ export default {
           localStorage.setItem("token", response.token);
           //lưu user info
           localStorage.setItem("user", JSON.stringify(response.reader));
+          
           this.$router.push({ name: "Home" });
         } else {
           this.errorMessage = response.message || "Đăng nhập không thành công.";

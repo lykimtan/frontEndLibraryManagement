@@ -57,6 +57,18 @@
             </label>
         </div>
 
+         <div class="form-check">
+            <input
+            type="checkbox"
+            class="form-check-input"
+            id="lost"
+            v-model="filterStatus.lost"
+            />
+            <label class="form-check-label ms-2" for="lost">
+            Mất sách
+            </label>
+        </div>
+
            <div class="d-flex align-items-start gap-2">
             <label for="sortBy" class="form-label fw-bold text-secondary">Sắp xếp theo thời gian:</label>
             <select 
@@ -79,11 +91,25 @@
 
         <div v-if="success" class="alert alert-success">
         {{ success }}</div>
-        <RequestList
-            v-if="filteredRequestCount > 0"
+        <RequestList v-if="!isStaff() && filteredRequestCount > 0"
             :requests="filteredRequests"
             @delete-request="deleteRequest"
          />
+
+         <AllRequest v-if="isStaff() && filteredRequestCount > 0"
+            :staff-id="readerId"
+            :requests="filteredRequests"
+            @delete-request="deleteRequest"
+            @approve-request="handleApprove"
+            @reject-request="handleReject"
+            @borrowed-request="handleBorrowed"
+            @returned-request="handleReturned"
+            @lost-request="handleLost"    
+            @pay-fine="handlePayFine"
+         />
+
+         
+
          
       <div v-else class="text-center py-5">
             <p class="text-muted">
@@ -99,11 +125,14 @@ import RequestList from '@/components/RequestList.vue';
 import InputSearch from '@/components/InputSearch.vue';
 import BookService from '@/services/book.service';
 import LibraryService from '@/services/library.service';
+import AllRequest from '@/components/AllRequest.vue';
+import readerService from '@/services/reader.service';
 
 export default {
     components: {
         RequestList,
         InputSearch,
+        AllRequest
     },
     data() {
         return {
@@ -156,11 +185,15 @@ export default {
                 filtered = filtered.filter(request => request.status === 'approved');
             }
 
+            if (this.filterStatus.lost) {
+                filtered = filtered.filter(request => request.status === 'lost');
+            }
+
             // Filter theo search text
             if (this.searchText) {
                 const searchLower = this.searchText.toLowerCase();
                 filtered = filtered.filter((request, index) => {
-                    const requestString = [request.bookId, request.readerId, request.status, request.book?.tensach, request.book?.tacgia]
+                    const requestString = [request.bookId, request.readerId, request.status, request.book?.tensach, request.book?.tacgia, request.reader?.email, request.reader?.firstname]
                         .filter(item => item)
                         .join(' ')
                         .toLowerCase();
@@ -192,12 +225,19 @@ export default {
 
     async created() {  
     await this.getInfoReader();
-    if (this.readerId) { // Chỉ fetch khi có readerId
-        await this.fetchRequests();
-    }
+    await this.fetchRequests();
+    const isStaff = this.isStaff();
+    console.log('Is staff:', isStaff);
     },
 
     methods: {
+
+        isStaff() {
+            const user = localStorage.getItem('user');
+            if (!user) return false;
+            const userInfo = JSON.parse(user);
+            return userInfo && userInfo.role === 'staff'; // Kiểm tra role của user
+        },
         handleSearch(searchValue) {
             this.searchText = searchValue;
         },
@@ -205,9 +245,14 @@ export default {
         handleSortChange() {
             console.log('Sort changed to:', this.sortBy);
         },
+
         async fetchRequests() {
             try {
-                this.requests = await LibraryService.getRequestsByReaderId(this.readerId);
+                if(this.isStaff()) {
+                    this.requests = await LibraryService.getAllBorrowRequest();
+                } else {
+                    this.requests = await LibraryService.getRequestsByReaderId(this.readerId);
+                }
                 console.log("Requests fetched:", this.requests);
                 if (!this.requests || this.requests.length === 0) {
                     return this.requests = [];
@@ -258,8 +303,167 @@ export default {
                     }, 5000);
                 }
             }
-        }
+        },
+
+        async handleApprove(requestId) {
+            if(!this.readerId) {
+                alert("Không xác định được ID của bạn")
+            }
+            console.log("Approving request ID:", requestId);
+            if(confirm("Bạn có chắc muốn duyệt yêu cầu mượn sách này không ?")) {
+                try {
+                    await LibraryService.approveRequest(requestId, this.readerId);
+                    // Cập nhật lại danh sách requests sau khi duyệt
+                    await this.fetchRequests();
+                    
+                    this.success = "Yêu cầu mượn đã được duyệt thành công.";
+                    setTimeout(() => {
+                        this.success = null;
+                    }, 3000);
+                    
+                } catch (error) {
+                    console.error('Error approving request:', error);
+                    this.error = "Không thể duyệt yêu cầu mượn.";
+                    
+                    // Clear error message sau 5s
+                    setTimeout(() => {
+                        this.error = null;
+                    }, 5000);
+                }
+            }
+        }, 
+        async handleBorrowed(requestId) {
+            if(!this.readerId) {
+                alert("Không xác định được ID của bạn")
+            }
+            console.log("Borrowing request ID:", requestId);
+            if(confirm("Bạn có chắc muốn mượn sách này không ?")) {
+                try {
+                    await LibraryService.borrowed(requestId, this.readerId);
+                    // Cập nhật lại danh sách requests sau khi duyệt
+                   await this.fetchRequests();
+                    
+                    this.success = "Giao dịch mượn sách thành công.";
+                    setTimeout(() => {
+                        this.success = null;
+                    }, 3000);
+                    
+                } catch (error) {
+                    console.error('Error approving request:', error);
+                    this.error = "Không thể duyệt yêu cầu mượn.";
+                    
+                    // Clear error message sau 5s
+                    setTimeout(() => {
+                        this.error = null;
+                    }, 5000);
+                }
+            }
+        },
+
+        async handleReturned(requestId) {
+            if(!this.readerId) {
+                alert("Không xác định được ID của bạn")
+            }
+            console.log("Returning request ID:", requestId);
+            if(confirm("Bạn có chắc muốn trả sách này không ?")) {
+                try {
+                    await LibraryService.returnBook(requestId, this.readerId);
+                    // Cập nhật lại danh sách requests sau khi duyệt
+                   await this.fetchRequests();
+                    this.success = "Sách đã được trả thành công.";
+                    setTimeout(() => {
+                        this.success = null;
+                    }, 3000);
+                    
+                } catch (error) {
+                    console.error('Error returning book:', error);
+                    this.error = "Không thể trả cuốn sách này.";
+                    
+                    // Clear error message sau 5s
+                    setTimeout(() => {
+                        this.error = null;
+                    }, 5000);
+                }
+            }
+        }, 
+
+        async handleReject(requestId, staffId, reason) {
+            if(!this.readerId) {
+                alert("Không xác định được ID của bạn")
+            }
+            console.log("Rejecting request ID:", requestId);
+            if(confirm("Bạn có chắc muốn từ chối yêu cầu mượn sách này không ?")) {
+                try {
+                    await LibraryService.rejectRequest(requestId, staffId, reason);
+                    // Cập nhật lại danh sách requests sau khi duyệt
+                   await this.fetchRequests();
+                    this.success = "Yêu cầu mượn đã được từ chối.";
+                    setTimeout(() => {
+                        this.success = null;
+                    }, 3000);
+                    
+                } catch (error) {
+                    console.error('Error rejecting request:', error);
+                    this.error = "Không thể từ chối yêu cầu mượn.";
+                    
+                    // Clear error message sau 5s
+                    setTimeout(() => {
+                        this.error = null;
+                    }, 5000);
+                }
+            }
+        },
+
+        async handleLost(requestId) {
+            if(!this.readerId) {
+                alert("Không xác định được ID của bạn")
+            }
+            console.log("Lost request ID:", requestId);
+            if(confirm("Bạn có chắc muốn đánh dấu sách này là mất không ?")) {
+                try {
+                    await LibraryService.lostBook(requestId, this.readerId);
+                    // Cập nhật lại danh sách requests sau khi duyệt
+                   await this.fetchRequests();
+                    this.success = "Sách đã được đánh dấu là mất.";
+                    setTimeout(() => {
+                        this.success = null;
+                    }, 3000);
+                    
+                } catch (error) {
+                    console.error('Error marking book as lost:', error);
+                    this.error = "Thao tác chưa được thực hiện. Vui lòng thử lại.";
+
+                    // Clear error message sau 5s
+                    setTimeout(() => {
+                        this.error = null;
+                    }, 5000);
+                }
+            }
+        },
+
+        async handlePayFine(readerId) {
+            console.log("Paying fine for reader ID:", readerId);
+            if(confirm("Bạn có chắc muốn thanh toán tiền phạt cho độc giả này không ?")) {
+                try {
+                    await readerService.payFine(readerId);
+                    await this.fetchRequests();
+                    this.success = "Thanh toán tiền phạt thành công.";
+                    setTimeout(() => {
+                        this.success = null;
+                    }, 3000);
+                    
+                }catch(error) {
+                    console.error('Error deleting request:', error);
+                    this.error = "Không thể thanh toán tiền phạt này.";
+                    // Clear error message sau 5s
+                    setTimeout(() => {
+                        this.error = null;
+                    }, 5000);
+                }
+            }
+        },
     },
+    
     async mounted() {
         console.log('Request component mounted');
         const successMessage = this.$route.query.success;

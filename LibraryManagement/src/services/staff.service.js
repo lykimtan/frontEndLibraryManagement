@@ -1,6 +1,6 @@
 import createApiClient from './api.service';
 class StaffService {
-    constructor(baseUrl = '/api/staff') {
+    constructor(baseUrl = '/api/librarymanagement/staff') {
         this.api = createApiClient(baseUrl);
     }
 
@@ -13,12 +13,30 @@ class StaffService {
     }
 
     async createStaff(staffData) {
-        return (await this.api.post('/', staffData)).data;
+       try {
+            console.log('Service: Sending data:', staffData); 
+            const response = await this.api.post('/', staffData);
+            console.log('Service: Success response:', response); 
+            return response.data;
+        } catch (error) {
+            console.log('Service: Error caught:', error); 
+            console.log('Service: Error response:', error.response); 
+            throw error;
+       }
     }
 
 
-    async login(staffData) {
-        return (await this.api.post('/login', staffData)).data;
+    async login(email, password) {
+        console.log('Staff service login called with:', { email, password: password ? '***' : 'empty' });
+        
+        try {
+            const response = await this.api.post('/login', { email, password });
+            console.log('Staff service response:', response);
+            return response.data;
+        } catch (error) {
+            console.error('Staff service error:', error);
+            throw error;
+        }
     }
 
     async updateStaffInfo(staffId, staffData) {
@@ -26,8 +44,9 @@ class StaffService {
     }
 
     async changePassword(staffId, newPassword) {
-        return (await this.api.put(`/${staffId}/password`, { newPassword })).data;
+        return (await this.api.put(`/${staffId}/password`,  newPassword )).data;
     }
+
 
     async logout() {
         return (await this.api.post('/logout')).data;

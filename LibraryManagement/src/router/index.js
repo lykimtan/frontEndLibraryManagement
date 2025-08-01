@@ -14,6 +14,38 @@ const routes = [
     },
 
     {
+        path: '/create-book',
+        name: 'CreateBook',
+        component: () => import('@/views/AddBook.vue')
+    },
+
+    {
+        path: '/nxb',
+        name: 'NXB',
+        component: () => import('@/views/NXB.vue')
+    },
+
+    {
+        path: '/create_nxb',
+        name: 'CreateNXB',
+        component: () => import('@/views/AddNXB.vue')
+    },
+
+    {
+        path: '/update-nxb/:nxbId',
+        name: 'UpdateNXB',
+        component: () => import('@/views/UpdateNXB.vue'),
+        props: true
+    },
+
+     {
+        path: '/update-book/:bookId',
+        name: 'UpdateBook',
+        component: () => import('@/views/UpdateBook.vue'),
+        props: true
+    },
+
+    {
         path: '/register',
         name: 'Register',
         component: () => import('@/views/Register.vue')
@@ -30,6 +62,7 @@ const routes = [
         name: 'CreateRequest',
         component: () => import('@/views/CreateRequest.vue')
     },
+
 
     {
         path: '/requests',

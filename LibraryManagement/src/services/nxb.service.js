@@ -1,6 +1,6 @@
 import createApiClient from './api.service'
 class NXBService {
-    constructor(baseUrl = '/api/nxb') {
+    constructor(baseUrl = '/api/librarymanagement/nxb') {
         this.api = createApiClient(baseUrl);
     }
 
