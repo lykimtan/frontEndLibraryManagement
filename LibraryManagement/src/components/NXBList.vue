@@ -10,14 +10,6 @@
           <div class="card-footer bg-white border-0 d-flex flex-column gap-2 mt-auto">
             <button
               type="button"
-              class="btn btn-outline-danger w-100"
-              @click="goToDelete(nxb)"
-            >
-              <i class="fa-solid fa-trash me-1"></i>
-              Xoá NXB
-            </button>
-            <button
-              type="button"
               class="btn btn-outline-success w-100"
               @click="goToUpdate(nxb)"
             >

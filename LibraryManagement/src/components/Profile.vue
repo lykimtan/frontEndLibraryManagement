@@ -9,7 +9,7 @@
       <!-- Avatar bên trái -->
       <div class="text-center text-md-center border rounded p-3 bg-light">
         <img
-          :src="reader?.avatar || 'https://i.pinimg.com/736x/ef/cc/c5/efccc5499c237afce586fc566800c622.jpg'"
+          :src="reader?.avatar || 'https://i.pinimg.com/736x/b7/03/f8/b703f8de7700e210f92e415286db8b9b.jpg'"
           alt="Avatar"
           class="rounded-circle border shadow-sm"
           style="width: 150px; height: 150px; object-fit: cover;"

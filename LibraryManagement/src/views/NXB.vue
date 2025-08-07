@@ -65,7 +65,7 @@ export default {
         handleSearch(searchValue) {
             this.searchText = searchValue;
         },
-        async retrieveBooks() {
+        async retrieveNXB() {
             this.loading = true;
             try {
                 this.nxbList = await nxbService.getAllNXB();
@@ -75,9 +75,20 @@ export default {
                 this.loading = false;
             }
         },
+        isStaff() {
+            const user = localStorage.getItem('user');
+            if (user) {
+                const parsedUser = JSON.parse(user);
+                return parsedUser.role === 'staff';
+            }
+            return false;
+        },
     },
     async mounted() {
-        await this.retrieveBooks();
+        await this.retrieveNXB();
+        if(!this.isStaff()) {
+            this.$router.push('/');
+        }
     }
 }
 </script>

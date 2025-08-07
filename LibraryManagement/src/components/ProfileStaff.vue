@@ -9,7 +9,7 @@
       <!-- Avatar bên trái -->
       <div class="text-center text-md-center border rounded p-3 bg-light">
         <img
-          :src="staff?.avatar || 'https://i.pinimg.com/736x/ef/cc/c5/efccc5499c237afce586fc566800c622.jpg'"
+          :src="staff?.avatar || 'https://i.pinimg.com/1200x/de/8a/26/de8a26f45a89d4072e037db4e85e3f97.jpg'"
           alt="Avatar"
           class="rounded-circle border shadow-sm"
           style="width: 150px; height: 150px; object-fit: cover;"
@@ -101,7 +101,7 @@
               <i class="bi bi-pencil"></i> Chỉnh sửa
             </button>
             <button class="btn btn-outline-primary btn-sm" @click="openFormCreateStaff">
-              <i class="fa-solid fa-key"></i> Tạo tài khoản nhân viên mới
+              <i class="fa-solid fa-circle-plus"></i> Tạo tài khoản nhân viên mới
             </button>
           </div>
 

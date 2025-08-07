@@ -5,6 +5,10 @@ export default {
         requests: {
             type: Array,
             default: () => []
+        },
+        reader: {
+            type: Object,
+            default: () => ({})
         }
     },
     mounted() {
@@ -48,7 +52,8 @@ export default {
                 'approved': 'Đã duyệt',
                 'rejected': 'Bị từ chối',
                 'borrowed': 'Đã mượn',
-                'returned': 'Đã trả'
+                'returned': 'Đã trả',
+                'lost': 'Mất sách'
             };
             return statusMap[status] || status || 'Không xác định';
         },
@@ -59,7 +64,8 @@ export default {
                 'approved': 'text-success',
                 'rejected': 'text-danger',
                 'borrowed': 'text-info',
-                'returned': 'text-secondary'
+                'returned': 'text-secondary',
+                'lost' : 'text-danger fw-bold'
             };
             return classMap[status] || 'text-muted';
         }
@@ -133,6 +139,13 @@ export default {
               <span :class="getStatusClass(request.status)">
                 {{ getStatusText(request.status) }}
               </span>
+            </p>
+
+             <p class="card-text mb-1 mt-4 mt-sm-0" v-if="request.status ==='lost' && reader.fine !== 0">
+              <strong>Thông tin phạt </strong> <span class="text-danger">Chưa thanh toán {{ reader.fine }} VNĐ</span>
+            </p>
+            <p class="card-text mb-1 mt-4 mt-sm-0" v-else-if="request.status ==='lost' && reader.fine === 0">
+              <strong>Thông tin phạt:  </strong> <span class="text-success">Đã Thanh toán</span>
             </p>
           </div>
         </div>

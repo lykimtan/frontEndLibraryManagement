@@ -124,9 +124,6 @@ const isStaff = () => {
               </li>
             </ul>
           </li>
-          <li class="nav-item">
-            <router-link to="/about" class="nav-link">Giới thiệu</router-link>
-          </li>
           
           <!-- Hiển thị button login nếu chưa đăng nhập -->
           <li class="nav-item" v-if="userName === 'Tài khoản'">

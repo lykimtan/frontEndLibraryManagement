@@ -32,6 +32,18 @@
             </label>
         </div>
 
+        <div class="form-check">
+            <input
+            type="checkbox"
+            class="form-check-input"
+            id="lost"
+            v-model="filterStatus.lost"
+            />
+            <label class="form-check-label ms-2" for="lost">
+            Mất sách
+            </label>
+        </div>
+
            <div class="d-flex align-items-start gap-2">
             <label for="sortBy" class="form-label fw-bold text-secondary">Sắp xếp theo thời gian:</label>
             <select 
@@ -58,6 +70,7 @@
             v-if="filteredRequestCount > 0"
             :requests="filteredRequests"
             @delete-request="deleteRequest"
+            :reader="reader"
          />
          
       <div v-else class="text-center py-5">
@@ -75,6 +88,7 @@ import InputSearch from '@/components/InputSearch.vue';
 import BorrowHistory from '@/components/BorrowHistory.vue';
 import BookService from '@/services/book.service';
 import LibraryService from '@/services/library.service';
+import readerService from '@/services/reader.service';
 
 export default {
     components: {
@@ -84,6 +98,7 @@ export default {
     data() {
         return {
             requests: [],
+            reader: {},
             error: null,
             searchText: '',
             success: null,
@@ -154,13 +169,14 @@ export default {
         },
         filteredRequestCount() {
             return this.filteredRequests.length;
-        }
+        },
     },
 
     async created() {  
     await this.getInfoReader();
     if (this.readerId) { // Chỉ fetch khi có readerId
         await this.fetchRequests();
+        await this.getDetailedInfoReader(this.readerId);
     }
     },
 
@@ -201,6 +217,18 @@ export default {
         console.log("Reader ID:", readerId);
         return readerId;
         },
+
+        async getDetailedInfoReader(readerId) {
+            return readerService.getReaderById(readerId)
+                .then(reader => {
+                    this.reader = reader;
+                    console.log("Reader info fetched:", this.reader);
+                })
+                .catch(error => {
+                    console.error("Error fetching reader info:", error);
+                    this.error = "Không thể lấy thông tin người đọc.";
+                });     
+        } ,
 
         async deleteRequest(requestId) {
             console.log("Deleting request ID:", requestId);

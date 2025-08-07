@@ -14,7 +14,7 @@ export default {
 
         checkLateReturn(request) {
             if (!request.expectedReturnDate) return false;
-            if(request.status === 'borrowed' || 1===1) {
+            if(request.status === 'borrowed') {
               const today = new Date();
               const expectedReturn = new Date(request.expectedReturnDate);
               return expectedReturn < today;

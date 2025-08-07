@@ -75,6 +75,7 @@ export default {
             <p class="card-text mb-1"><strong>Đơn giá:</strong> {{ book.dongia || 'N/A' }}</p>
             <p class="card-text mb-3"><strong>Số quyển:</strong> {{ book.soquyen || 0 }}</p>
             <button
+              v-if="!isStaff()"
               type="button"
               class="btn btn-outline-primary mt-auto"
               @click="goToRequest(book)"
